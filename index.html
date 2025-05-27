@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionnaire Drogue et Alcool</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Questionnaire sur la consommation de drogues et d'alcool</h1>
+        
+        <form id="survey-form">
+            <!-- Section 1: Informations d'identification -->
+            <section class="form-section">
+                <h2>Identification</h2>
+                <div class="form-group">
+                    <label for="lastName">Nom :</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="firstName">Prénom :</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Adresse courriel :</label>
+                    <input type="email" id="email" name="email" required>
+                    <small class="help-text">Cette adresse servira d'identifiant unique</small>
+                </div>
+            </section>
+
+            <!-- Section 2: Informations personnelles -->
+            <section class="form-section">
+                <h2>1. Informations personnelles</h2>
+                <div class="form-group">
+                    <label for="age">Âge :</label>
+                    <input type="number" id="age" name="age" required min="18" max="120">
+                    <small class="help-text">Vous devez avoir au moins 18 ans</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">Genre :</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">Sélectionnez</option>
+                        <option value="male">Masculin</option>
+                        <option value="female">Féminin</option>
+                        <option value="other">Autre</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="occupation">Situation professionnelle :</label>
+                    <select id="occupation" name="occupation" required>
+                        <option value="">Sélectionnez</option>
+                        <option value="student">Étudiant(e)</option>
+                        <option value="employed">Employé(e)</option>
+                        <option value="unemployed">Sans emploi</option>
+                        <option value="retired">Retraité(e)</option>
+                        <option value="other">Autre</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Section 3: Consommation d'alcool -->
+            <section class="form-section">
+                <h2>2. Consommation d'alcool</h2>
+                <div class="form-group">
+                    <label>Consommez-vous de l'alcool ?</label>
+                    <div class="radio-group">
+                        <input type="radio" id="alcohol-yes" name="alcohol" value="yes" required>
+                        <label for="alcohol-yes">Oui</label>
+                        <input type="radio" id="alcohol-no" name="alcohol" value="no" required>
+                        <label for="alcohol-no">Non</label>
+                    </div>
+                </div>
+
+                <div class="form-group alcohol-frequency-group" style="display: none;">
+                    <label for="alcohol-frequency">Si oui, à quelle fréquence ?</label>
+                    <select id="alcohol-frequency" name="alcohol-frequency">
+                        <option value="">Sélectionnez</option>
+                        <option value="daily">Quotidiennement</option>
+                        <option value="weekly">Hebdomadaire</option>
+                        <option value="monthly">Mensuel</option>
+                        <option value="rarely">Rarement</option>
+                    </select>
+                </div>
+
+                <div class="form-group alcohol-quantity-group" style="display: none;">
+                    <label for="alcohol-quantity">Quantité moyenne par occasion :</label>
+                    <select id="alcohol-quantity" name="alcohol-quantity">
+                        <option value="">Sélectionnez</option>
+                        <option value="1-2">1-2 verres</option>
+                        <option value="3-4">3-4 verres</option>
+                        <option value="5-6">5-6 verres</option>
+                        <option value="more">Plus de 6 verres</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Section 4: Consommation de drogues -->
+            <section class="form-section">
+                <h2>3. Consommation de drogues</h2>
+                <div class="form-group">
+                    <label>Avez-vous déjà consommé des drogues ?</label>
+                    <div class="radio-group">
+                        <input type="radio" id="drugs-yes" name="drugs" value="yes" required>
+                        <label for="drugs-yes">Oui</label>
+                        <input type="radio" id="drugs-no" name="drugs" value="no" required>
+                        <label for="drugs-no">Non</label>
+                    </div>
+                </div>
+
+                <div class="form-group drugs-types-group" style="display: none;">
+                    <label>Types de drogues consommées :</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="cannabis" name="drug-type" value="cannabis">
+                        <label for="cannabis">Cannabis</label>
+                        <input type="checkbox" id="cocaine" name="drug-type" value="cocaine">
+                        <label for="cocaine">Cocaïne</label>
+                        <input type="checkbox" id="ecstasy" name="drug-type" value="ecstasy">
+                        <label for="ecstasy">Ecstasy</label>
+                        <input type="checkbox" id="heroin" name="drug-type" value="heroin">
+                        <label for="heroin">Héroïne</label>
+                        <input type="checkbox" id="amphetamines" name="drug-type" value="amphetamines">
+                        <label for="amphetamines">Amphétamines</label>
+                        <input type="checkbox" id="other-drugs" name="drug-type" value="other">
+                        <label for="other-drugs">Autres</label>
+                    </div>
+                </div>
+
+                <div class="form-group other-drugs-group" style="display: none;">
+                    <label for="other-drugs-text">Précisez les autres drogues :</label>
+                    <input type="text" id="other-drugs-text" name="other-drugs-text">
+                </div>
+            </section>
+
+            <!-- Section 5: Contexte de consommation -->
+            <section class="form-section">
+                <h2>4. Contexte de consommation</h2>
+                <div class="form-group">
+                    <label>Dans quelles circonstances consommez-vous ? (plusieurs choix possibles)</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="context-social" name="context" value="social">
+                        <label for="context-social">Contexte social (fêtes, sorties)</label>
+                        <input type="checkbox" id="context-stress" name="context" value="stress">
+                        <label for="context-stress">Gestion du stress</label>
+                        <input type="checkbox" id="context-alone" name="context" value="alone">
+                        <label for="context-alone">Seul(e) à la maison</label>
+                        <input type="checkbox" id="context-work" name="context" value="work">
+                        <label for="context-work">Au travail/études</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Impact sur la vie quotidienne -->
+            <section class="form-section">
+                <h2>5. Impact sur la vie quotidienne</h2>
+                <div class="form-group">
+                    <label for="impact">Comment évaluez-vous l'impact de votre consommation sur votre vie quotidienne ?</label>
+                    <textarea id="impact" name="impact" rows="4" required></textarea>
+                    <small class="help-text">Minimum 10 caractères</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Domaines affectés par votre consommation :</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="impact-work" name="impact-areas" value="work">
+                        <label for="impact-work">Travail/Études</label>
+                        <input type="checkbox" id="impact-family" name="impact-areas" value="family">
+                        <label for="impact-family">Relations familiales</label>
+                        <input type="checkbox" id="impact-social" name="impact-areas" value="social">
+                        <label for="impact-social">Relations sociales</label>
+                        <input type="checkbox" id="impact-health" name="impact-areas" value="health">
+                        <label for="impact-health">Santé physique</label>
+                        <input type="checkbox" id="impact-mental" name="impact-areas" value="mental">
+                        <label for="impact-mental">Santé mentale</label>
+                        <input type="checkbox" id="impact-financial" name="impact-areas" value="financial">
+                        <label for="impact-financial">Situation financière</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: Aide et soutien -->
+            <section class="form-section">
+                <h2>6. Aide et soutien</h2>
+                <div class="form-group">
+                    <label>Avez-vous déjà cherché de l'aide pour votre consommation ?</label>
+                    <div class="radio-group">
+                        <input type="radio" id="help-yes" name="help-sought" value="yes" required>
+                        <label for="help-yes">Oui</label>
+                        <input type="radio" id="help-no" name="help-sought" value="no" required>
+                        <label for="help-no">Non</label>
+                    </div>
+                </div>
+
+                <div class="form-group help-type-group" style="display: none;">
+                    <label>Type d'aide recherchée :</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="help-medical" name="help-type" value="medical">
+                        <label for="help-medical">Médicale</label>
+                        <input type="checkbox" id="help-psychological" name="help-type" value="psychological">
+                        <label for="help-psychological">Psychologique</label>
+                        <input type="checkbox" id="help-support-group" name="help-type" value="support-group">
+                        <label for="help-support-group">Groupe de soutien</label>
+                        <input type="checkbox" id="help-other" name="help-type" value="other">
+                        <label for="help-other">Autre</label>
+                    </div>
+                </div>
+            </section>
+
+            <div class="form-actions">
+                <button type="submit">Envoyer le questionnaire</button>
+                <button type="reset">Réinitialiser</button>
+            </div>
+        </form>
+
+        <div id="success-message" class="message success" style="display: none;">
+            Votre questionnaire a été enregistré avec succès !
+        </div>
+
+        <div class="export-section">
+            <button id="export-csv" class="export-button">Exporter les réponses (CSV)</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
