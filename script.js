@@ -1,3 +1,4 @@
+let db;
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('survey-form');
     const alcoholRadios = document.querySelectorAll('input[name="alcohol"]');
@@ -13,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const exportButton = document.getElementById('export-csv');
 
     // Initialiser la base de données
-    let db;
+    
     initDB().then(database => {
         db = database;
     }).catch(error => {
