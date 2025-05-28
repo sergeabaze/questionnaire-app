@@ -105,123 +105,72 @@ function validateData(data) {
     return true;
 }
 
-// Configuration de la base de données IndexedDB
-const DB_NAME = 'QuestionnaireDB';
-const DB_VERSION = 1;
-const STORE_NAME = 'responses';
+// Fonction pour charger les questionnaires
+async function loadQuestionnaires() {
+    if (!checkAuth()) return;
 
-// Initialisation de la base de données
-function initDB() {
-    return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => resolve(request.result);
-
-        request.onupgradeneeded = (event) => {
-            const db = event.target.result;
-            if (!db.objectStoreNames.contains(STORE_NAME)) {
-                const store = db.createObjectStore(STORE_NAME, { 
-                    keyPath: 'email'
-                });
-                // Création d'index pour la recherche
-                store.createIndex('email', 'email', { unique: true });
-                store.createIndex('lastName', 'lastName', { unique: false });
-                store.createIndex('firstName', 'firstName', { unique: false });
-            }
-        };
-    });
-}
-
-// Fonction modifiée pour afficher les résultats avec déchiffrement
-async function displayResults(encryptedData) {
-    const resultsDiv = document.getElementById('results');
-    if (!encryptedData) {
-        resultsDiv.innerHTML = '<p>Aucune réponse trouvée pour cet email.</p>';
+    const userId = sessionStorage.getItem('userId');
+    if (!userId) {
+        alert('Utilisateur non identifié');
+        window.location.href = 'login.html';
         return;
     }
 
     try {
-        const data = await decryptData(encryptedData);
-        if (!validateData(data)) {
-            throw new Error('Données invalides');
+        // Récupérer les questionnaires depuis l'API
+        const response = await fetch(`${window.APP_CONFIG.apiBaseUrl}${window.APP_CONFIG.endpoints.questionnaires}?userId=${userId}`);
+        
+        if (!response.ok) {
+            throw new Error('Erreur lors de la récupération des questionnaires');
         }
 
-        const formattedDate = new Date(data.timestamp).toLocaleString();
+        const questionnaires = await response.json();
+        displayQuestionnaires(questionnaires);
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de la récupération des questionnaires');
+    }
+}
+
+// Fonction pour afficher les questionnaires
+function displayQuestionnaires(questionnaires) {
+    const container = document.getElementById('questionnaires-container');
+    container.innerHTML = ''; // Nettoyer le conteneur
+
+    if (questionnaires.length === 0) {
+        container.innerHTML = '<div class="alert alert-info">Aucun questionnaire trouvé</div>';
+        return;
+    }
+
+    questionnaires.forEach(questionnaire => {
+        const card = document.createElement('div');
+        card.className = 'card mb-3';
         
-    let html = `
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">Réponse du ${formattedDate}</h3>
-                </div>
-                <div class="card-body">
-                    <div class="mb-4">
-                        <h4 class="text-primary mb-3">Informations personnelles</h4>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Nom :</strong> ${data.lastName}</p>
-                                <p><strong>Prénom :</strong> ${data.firstName}</p>
-                                <p><strong>Email :</strong> ${data.email}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong>Âge :</strong> ${data.age}</p>
-                                <p><strong>Genre :</strong> ${data.gender === 'male' ? 'Masculin' : data.gender === 'female' ? 'Féminin' : 'Autre'}</p>
-                                <p><strong>Situation professionnelle :</strong> ${
-                        data.occupation === 'student' ? 'Étudiant(e)' :
-                        data.occupation === 'employed' ? 'Employé(e)' :
-                        data.occupation === 'unemployed' ? 'Sans emploi' :
-                        data.occupation === 'retired' ? 'Retraité(e)' : 'Autre'                }</p>
-                            </div>
-                        </div>
-                    </div>
+        const date = new Date(questionnaire.dateCreation).toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
 
-                    <div class="mb-4">
-                        <h4 class="text-primary mb-3">Consommation d'alcool</h4>
-                        <div class="alert ${data.alcohol === 'yes' ? 'alert-info' : 'alert-success'}">
-                            <p class="mb-2"><strong>Consomme de l'alcool :</strong> ${data.alcohol === 'yes' ? 'Oui' : 'Non'}</p>
-                            ${data.alcohol === 'yes' ? `
-                                <p class="mb-2"><strong>Fréquence :</strong> ${data.alcoholFrequency || 'N/A'}</p>
-                                <p class="mb-0"><strong>Quantité :</strong> ${data.alcoholQuantity || 'N/A'}</p>
-                            ` : ''}                        </div>
-
-                    <div class="mb-4">
-                        <h4 class="text-primary mb-3">Consommation de drogues</h4>
-                        <div class="alert ${data.drugs === 'yes' ? 'alert-warning' : 'alert-success'}">
-                            <p class="mb-2"><strong>Consomme des drogues :</strong> ${data.drugs === 'yes' ? 'Oui' : 'Non'}</p>
-                            ${data.drugs === 'yes' ? `
-                                <p class="mb-2"><strong>Types :</strong> ${data.drugTypes.join(', ') || 'N/A'}</p>
-                                ${data.otherDrugs ? `<p class="mb-0"><strong>Autres drogues :</strong> ${data.otherDrugs}</p>` : ''}
-                            ` : ''}
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <h4 class="text-primary mb-3">Impact et contexte</h4>
-                        <div class="card">
-                            <div class="card-body">
-                                <p class="mb-2"><strong>Contextes de consommation :</strong> ${data.contexts.join(', ') || 'N/A'}</p>
-                                <p class="mb-2"><strong>Impact :</strong> ${data.impact}</p>
-                                <p class="mb-0"><strong>Domaines affectés :</strong> ${data.impactAreas.join(', ') || 'N/A'}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <h4 class="text-primary mb-3">Aide et soutien</h4>
-                        <div class="alert ${data.helpSought === 'yes' ? 'alert-info' : 'alert-warning'}">
-                            <p class="mb-2"><strong>A cherché de l'aide :</strong> ${data.helpSought === 'yes' ? 'Oui' : 'Non'}</p>
-                            ${data.helpSought === 'yes' ? `
-                                <p class="mb-0"><strong>Types d'aide :</strong> ${data.helpTypes.join(', ') || 'N/A'}</p>
-                            ` : ''}
+        card.innerHTML = `
+            <div class="card-body">
+                <h5 class="card-title">Questionnaire du ${date}</h5>
+                <div class="card-text">
+                    <p><strong>Consommation d'alcool :</strong> ${questionnaire.consommationAlcool.frequence} 
+                       (${questionnaire.consommationAlcool.quantite} verres par semaine)</p>
+                    <p><strong>Drogues consommées :</strong> ${questionnaire.consommationDrogues.join(', ')}</p>
+                    <p><strong>Impact sur la santé :</strong> ${questionnaire.impactSante}</p>
+                    <p><strong>Impact social :</strong> ${questionnaire.impactSocial}</p>
+                    <p><strong>Demande d'aide :</strong> ${questionnaire.demandeAide ? 'Oui' : 'Non'}</p>
+                    ${questionnaire.commentaires ? `<p><strong>Commentaires :</strong> ${questionnaire.commentaires}</p>` : ''}
                 </div>
             </div>
         `;
-
-        resultsDiv.innerHTML = html;
-    } catch (error) {
-        console.error('Erreur lors du déchiffrement:', error);
-        resultsDiv.innerHTML = '<p>Erreur lors de la lecture des données.</p>';
-    }
+        
+        container.appendChild(card);
+    });
 }
 
 // Gestionnaire d'événements au chargement de la page
@@ -229,49 +178,45 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Vérifier l'authentification
     if (!checkAuth()) return;
 
-    try {
-        const db = await initDB();
+    // Charger les questionnaires
+    loadQuestionnaires();
 
-        // Gestionnaire de recherche avec validation et sécurité
-        document.getElementById('searchBtn').addEventListener('click', async () => {
-            const email = document.getElementById('searchEmail').value;
-            
-            // Validation de l'email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email || !emailRegex.test(email)) {
-                alert('Veuillez entrer une adresse email valide');
-                return;
-            }
+    // Gestionnaire de recherche avec validation et sécurité
+    document.getElementById('searchBtn').addEventListener('click', async () => {
+        const email = document.getElementById('searchEmail').value;
+        
+        // Validation de l'email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+            alert('Veuillez entrer une adresse email valide');
+            return;
+        }
 
-            try {
-                const transaction = db.transaction(STORE_NAME, 'readonly');
-                const store = transaction.objectStore(STORE_NAME);
-                const request = store.get(email);
+        try {
+            const transaction = db.transaction(STORE_NAME, 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.get(email);
 
-                request.onsuccess = async () => {
-                    const encryptedData = request.result;
-                    await displayResults(encryptedData);
-                };
+            request.onsuccess = async () => {
+                const encryptedData = request.result;
+                await displayResults(encryptedData);
+            };
 
-                request.onerror = () => {
-                    throw new Error('Erreur lors de la recherche');
-                };
-            } catch (error) {
-                console.error('Erreur sécurisée:', error);
-                alert('Une erreur est survenue lors de la recherche. Veuillez réessayer.');
-            }
-        });        // Gestionnaire du bouton retour
-        document.getElementById('backToForm').addEventListener('click', () => {
-            window.location.href = 'index.html';
-        });
+            request.onerror = () => {
+                throw new Error('Erreur lors de la recherche');
+            };
+        } catch (error) {
+            console.error('Erreur sécurisée:', error);
+            alert('Une erreur est survenue lors de la recherche. Veuillez réessayer.');
+        }
+    });        // Gestionnaire du bouton retour
+    document.getElementById('backToForm').addEventListener('click', () => {
+        window.location.href = 'index.html';
+    });
 
-        // Gestionnaire du bouton déconnexion
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            logout();
-        });
+    // Gestionnaire du bouton déconnexion
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        logout();
+    });
 
-    } catch (error) {
-        console.error('Erreur d\'initialisation:', error);
-        alert('Erreur lors de l\'initialisation de la base de données');
-    }
 });

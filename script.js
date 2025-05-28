@@ -1,4 +1,6 @@
-let db;
+// Variables globales
+let currentUserId = sessionStorage.getItem('userId') || 'anonymous';
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('survey-form');
     const alcoholRadios = document.querySelectorAll('input[name="alcohol"]');
@@ -12,14 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const helpTypeGroup = document.querySelector('.help-type-group');
     const successMessage = document.getElementById('success-message');
     const exportButton = document.getElementById('export-csv');
-
-    // Initialiser la base de données
-    
-    initDB().then(database => {
-        db = database;
-    }).catch(error => {
-        console.error('Erreur d\'initialisation de la base de données:', error);
-    });
 
     // Gérer l'affichage conditionnel de la fréquence d'alcool et quantité
     alcoholRadios.forEach(radio => {
@@ -64,66 +58,54 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Validation et soumission du formulaire
+    // Gérer la soumission du formulaire
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
+        
+        // Récupérer les données du formulaire
+        const formData = new FormData(form);
+        
+        const questionnaire = {
+            id: Date.now().toString(),
+            userId: currentUserId,
+            consommationDrogues: Array.from(formData.getAll('drugs-types')),
+            frequenceConsommation: {},
+            consommationAlcool: {
+                frequence: formData.get('alcohol-frequency') || 'never',
+                quantite: parseInt(formData.get('alcohol-quantity')) || 0
+            },
+            impactSante: formData.get('health-impact'),
+            impactSocial: formData.get('social-impact'),
+            demandeAide: formData.get('help-sought') === 'yes',
+            commentaires: formData.get('comments')
+        };
 
         try {
-            // Validation du champ impact
-            const impact = document.getElementById('impact').value;
-            if (impact.length < 10) {
-                alert('Veuillez décrire l\'impact en au moins 10 caractères.');
-                return;
+            // Envoyer le questionnaire à l'API
+            const response = await fetch(`${window.APP_CONFIG.apiBaseUrl}${window.APP_CONFIG.endpoints.questionnaires}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(questionnaire)
+            });
+
+            if (!response.ok) {
+                throw new Error('Erreur lors de la sauvegarde du questionnaire');
             }
 
-            // Récupérer toutes les données du formulaire
-            const formData = {
-                lastName: document.getElementById('lastName').value,
-                firstName: document.getElementById('firstName').value,
-                email: document.getElementById('email').value,
-                age: document.getElementById('age').value,
-                gender: document.getElementById('gender').value,
-                occupation: document.getElementById('occupation').value,
-                alcohol: document.querySelector('input[name="alcohol"]:checked')?.value || '',
-                alcoholFrequency: document.getElementById('alcohol-frequency').value,
-                alcoholQuantity: document.getElementById('alcohol-quantity').value,
-                drugs: document.querySelector('input[name="drugs"]:checked')?.value || '',
-                drugTypes: Array.from(document.querySelectorAll('input[name="drug-type"]:checked')).map(cb => cb.value),
-                otherDrugs: document.getElementById('other-drugs-text').value,
-                contexts: Array.from(document.querySelectorAll('input[name="context"]:checked')).map(cb => cb.value),
-                impact: impact,
-                impactAreas: Array.from(document.querySelectorAll('input[name="impact-areas"]:checked')).map(cb => cb.value),
-                helpSought: document.querySelector('input[name="help-sought"]:checked')?.value || '',
-                helpTypes: Array.from(document.querySelectorAll('input[name="help-type"]:checked')).map(cb => cb.value),
-                timestamp: new Date().toISOString()
-            };
-
-            // Sauvegarder les données
-            await saveFormData(formData);
-
-            // Afficher le message de succès avec le lien de consultation
-            successMessage.innerHTML = `
-                <p>Votre questionnaire a été enregistré avec succès !</p>
-                <button class="secondary-button" onclick="window.location.href='consulter.html?email=${encodeURIComponent(formData.email)}'">
-                    Consulter vos réponses
-                </button>
-            `;
+            // Afficher le message de succès
             successMessage.style.display = 'block';
+            form.reset();
 
-            // Réinitialiser le formulaire
+            // Rediriger vers la page de consultation après 2 secondes
             setTimeout(() => {
-                form.reset();
-                alcoholFrequencyGroup.style.display = 'none';
-                alcoholQuantityGroup.style.display = 'none';
-                drugsTypesGroup.style.display = 'none';
-                otherDrugsGroup.style.display = 'none';
-                helpTypeGroup.style.display = 'none';
-                successMessage.style.display = 'none';
-            }, 5000);
+                window.location.href = 'consulter.html';
+            }, 2000);
 
         } catch (error) {
-            console.error('Erreur lors de la sauvegarde:', error);
-            alert('Une erreur est survenue lors de la sauvegarde de vos réponses. Veuillez réessayer.');
+            console.error('Erreur:', error);
+            alert('Une erreur est survenue lors de la sauvegarde du questionnaire');
         }
     });
 

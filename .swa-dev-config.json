@@ -1,0 +1,19 @@
+{
+  "devCommand": "npm start",
+  "appDevCommand": "npm start",
+  "apiDevCommand": "cd api && npm start",
+  "configurations": {
+    "development": {
+      "appLocation": ".",
+      "apiLocation": "api",
+      "outputLocation": ".",
+      "apiLanguage": "node",
+      "apiVersion": "18",
+      "env": {
+        "COSMOS_CONNECTION_STRING": "@Microsoft.KeyVault(SecretUri=https://kv-mainssurlecoeur.vault.azure.net/secrets/CosmosDbConnectionString/)",
+        "COSMOS_DATABASE_NAME": "db-enquetes",
+        "COSMOS_CONTAINER_NAME": "questionnaires"
+      }
+    }
+  }
+}

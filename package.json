@@ -5,8 +5,11 @@
   "main": "consulter.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "echo Building static files...",
-    "start": "npx serve ."
+    "build": "npm run build:api",
+    "build:api": "cd api && npm run build",
+    "start": "swa start",
+    "start:api": "cd api && npm start",
+    "dev": "swa start --api-devserver-url http://localhost:7071"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +17,9 @@
   "type": "commonjs",
   "devDependencies": {
     "serve": "^14.2.4"
+  },
+  "dependencies": {
+    "@azure/cosmos": "^4.4.1",
+    "@azure/identity": "^4.10.0"
   }
 }

@@ -1,0 +1,12 @@
+name: mainssurlecoeur
+services:
+  web:
+    project: .
+    language: js
+    host: staticwebapp
+    dist: .
+  api:
+    project: api
+    language: typescript
+    host: function
+    dist: ./api
