@@ -290,3 +290,37 @@ textarea:invalid {
         transform: translateY(0);
     }
 }
+
+/* Styles personnalisés complémentaires à Bootstrap */
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card-header {
+    border-bottom: none;
+}
+
+.results-section .card {
+    transition: transform 0.2s;
+}
+
+.results-section .card:hover {
+    transform: translateY(-2px);
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Ajustements des marges pour mobile */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
