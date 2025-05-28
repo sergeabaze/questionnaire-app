@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demande de Soutien - Association Mains sur le Coeur</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light">
+    <!-- Bannière -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-heart-fill me-2"></i>
+                Association Mains sur le Coeur
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Questionnaire</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="consulter.html">Consulter</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="fiche-demande-soutient.html">Demande de soutien</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <!-- En-tête de la page -->
+        <div class="text-center mb-5">
+            <h1 class="display-4 text-primary mb-3">Demande de Soutien</h1>
+            <p class="lead text-muted">Nous sommes là pour vous aider. Remplissez ce formulaire pour nous expliquer vos besoins.</p>
+        </div>
+
+        <!-- Formulaire de demande -->
+        <form id="support-form" class="needs-validation" novalidate>
+            <!-- Informations personnelles -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">1. Informations personnelles</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="lastName" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="lastName" required>
+                            <div class="invalid-feedback">Veuillez entrer votre nom</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="firstName" class="form-label">Prénom</label>
+                            <input type="text" class="form-control" id="firstName" required>
+                            <div class="invalid-feedback">Veuillez entrer votre prénom</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label">Téléphone</label>
+                            <input type="tel" class="form-control" id="phone" required>
+                            <div class="invalid-feedback">Veuillez entrer votre numéro de téléphone</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                            <div class="invalid-feedback">Veuillez entrer une adresse email valide</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Type de soutien -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">2. Type de soutien demandé</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="financial-support">
+                                <label class="form-check-label" for="financial-support">
+                                    Soutien financier
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="psychological-support">
+                                <label class="form-check-label" for="psychological-support">
+                                    Soutien psychologique
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="medical-support">
+                                <label class="form-check-label" for="medical-support">
+                                    Soutien médical
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="social-support">
+                                <label class="form-check-label" for="social-support">
+                                    Accompagnement social
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="other-support">
+                                <label class="form-check-label" for="other-support">
+                                    Autre type de soutien
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Situation actuelle -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">3. Description de votre situation</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="situation" class="form-label">Décrivez votre situation actuelle</label>
+                            <textarea class="form-control" id="situation" rows="4" required></textarea>
+                            <div class="invalid-feedback">Veuillez décrire votre situation</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="urgency" class="form-label">Niveau d'urgence</label>
+                            <select class="form-select" id="urgency" required>
+                                <option value="">Sélectionnez</option>
+                                <option value="urgent">Urgent (24-48h)</option>
+                                <option value="soon">Rapide (1 semaine)</option>
+                                <option value="normal">Normal (2-3 semaines)</option>
+                            </select>
+                            <div class="invalid-feedback">Veuillez sélectionner le niveau d'urgence</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="income" class="form-label">Revenus mensuels</label>
+                            <select class="form-select" id="income" required>
+                                <option value="">Sélectionnez</option>
+                                <option value="below-smic">Inférieur au SMIC</option>
+                                <option value="smic">SMIC</option>
+                                <option value="above-smic">Supérieur au SMIC</option>
+                            </select>
+                            <div class="invalid-feedback">Veuillez indiquer vos revenus</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents justificatifs -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">4. Documents justificatifs</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="id-document" class="form-label">Pièce d'identité</label>
+                            <input type="file" class="form-control" id="id-document" accept=".pdf,.jpg,.jpeg,.png">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="proof-income" class="form-label">Justificatif de revenus</label>
+                            <input type="file" class="form-control" id="proof-income" accept=".pdf,.jpg,.jpeg,.png">
+                        </div>
+                        <div class="col-12">
+                            <label for="other-documents" class="form-label">Autres documents pertinents</label>
+                            <input type="file" class="form-control" id="other-documents" multiple accept=".pdf,.jpg,.jpeg,.png">
+                            <div class="form-text">Vous pouvez sélectionner plusieurs fichiers</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Boutons de soumission -->
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-send me-2"></i>Envoyer la demande
+                        </button>
+                        <button type="reset" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-counterclockwise me-2"></i>Réinitialiser
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Message de succès (caché par défaut) -->
+        <div class="alert alert-success alert-dismissible fade show mt-4" role="alert" style="display: none;" id="success-message">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            Votre demande a été envoyée avec succès ! Nous vous contacterons dans les plus brefs délais.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Validation du formulaire
+        (() => {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation')
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    } else {
+                        event.preventDefault()
+                        // Afficher le message de succès
+                        document.getElementById('success-message').style.display = 'block'
+                        // Réinitialiser le formulaire
+                        form.reset()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+</body>
+</html>
