@@ -1,78 +1,48 @@
-// Configuration de la base de données pour les utilisateurs
-const AUTH_DB_NAME = 'AuthDB';
-const AUTH_DB_VERSION = 1;
-const AUTH_STORE_NAME = 'users';
-
-// Fonction pour initialiser la base de données d'authentification
-async function initAuthDB() {
-    return new Promise((resolve, reject) => {
-        const request = indexedDB.open(AUTH_DB_NAME, AUTH_DB_VERSION);
-
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => resolve(request.result);
-
-        request.onupgradeneeded = (event) => {
-            const db = event.target.result;
-            if (!db.objectStoreNames.contains(AUTH_STORE_NAME)) {
-                const store = db.createObjectStore(AUTH_STORE_NAME, { 
-                    keyPath: 'username' 
-                });
-                // Créer un utilisateur par défaut
-                store.add({
-                    username: 'admin',
-                    // Le mot de passe est "admin123" hashé
-                    password: '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9'
-                });
-            }
-        };
-    });
-}
-
-// Fonction pour hasher le mot de passe
-async function hashPassword(password) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-// Fonction pour vérifier les identifiants
-async function verifyCredentials(username, password) {
-    const db = await initAuthDB();
-    const transaction = db.transaction(AUTH_STORE_NAME, 'readonly');
-    const store = transaction.objectStore(AUTH_STORE_NAME);
-    const user = await new Promise((resolve) => {
-        const request = store.get(username);
-        request.onsuccess = () => resolve(request.result);
-    });
-
-    if (!user) return false;
-
-    const hashedPassword = await hashPassword(password);
-    return user.password === hashedPassword;
-}
-
-// Gestionnaire du formulaire de connexion
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('loginForm');
     const errorMessage = document.getElementById('errorMessage');
 
-    try {
-        const isValid = await verifyCredentials(username, password);
-        if (isValid) {
-            // Stocker le token de session
-            sessionStorage.setItem('isAuthenticated', 'true');
-            // Rediriger vers la page de consultation
-            window.location.href = 'consulter.html';
-        } else {
-            errorMessage.textContent = 'Nom d\'utilisateur ou mot de passe incorrect';
-        }
-    } catch (error) {
-        console.error('Erreur lors de la connexion:', error);
-        errorMessage.textContent = 'Une erreur est survenue. Veuillez réessayer.';
+    // Check if the user is already authenticated via SWA
+    fetch('/.auth/me')
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.clientPrincipal) {
+                // User is already logged in via SWA
+                sessionStorage.setItem('isAuthenticated', 'true'); // Optional: for immediate client-side checks
+                sessionStorage.setItem('userId', data.clientPrincipal.userId);
+                sessionStorage.setItem('userDetails', data.clientPrincipal.userDetails);
+                window.location.href = 'consulter.html'; // Redirect to a protected page
+            } else {
+                // User is not logged in via SWA, login form can remain visible
+                // or automatically redirect to AAD login.
+                // For this example, we'll let the user click a button.
+                sessionStorage.removeItem('isAuthenticated');
+                sessionStorage.removeItem('userId');
+                sessionStorage.removeItem('userDetails');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching /.auth/me:', error);
+            // Proceed as if not logged in, allow login form interaction
+        });
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Instead of custom validation, redirect to Azure AD login
+            // The username/password fields in the form are now effectively unused by this logic
+            // but can be kept for user familiarity or removed.
+            errorMessage.textContent = 'Redirection vers la page de connexion Azure...';
+            window.location.href = '/.auth/login/aad';
+        });
+    }
+
+    // Optional: Add a direct login button if the form is confusing
+    const azureLoginButton = document.getElementById('azureLoginButton'); // Assume a button with this ID exists or can be added
+    if (azureLoginButton) {
+        azureLoginButton.addEventListener('click', () => {
+            errorMessage.textContent = 'Redirection vers la page de connexion Azure...';
+            window.location.href = '/.auth/login/aad';
+        });
     }
 });
