@@ -35,7 +35,7 @@
     "exclude": ["/images/*", "/css/*", "/js/*", "/api/*"]
   },
   "globalHeaders": {
-    "Content-Security-Policy": "default-src 'self' 'unsafe-inline' 'unsafe-eval' https:; img-src 'self' https: data:; style-src 'self' 'unsafe-inline' https:; connect-src 'self' https:",
+    "Content-Security-Policy": "default-src 'self' https:; script-src 'self' https:; style-src 'self' https:; img-src 'self' https: data:; font-src 'self' https: data:; connect-src 'self' https:; frame-ancestors 'none';",
     "X-Frame-Options": "DENY",
     "X-Content-Type-Options": "nosniff",
     "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
